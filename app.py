@@ -14,6 +14,22 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
+# --- Database Initialization for Deployment ---
+# This ensures the DB exists and has data when deployed to Streamlit Cloud
+@st.cache_resource
+def init_db():
+    from models import seed_data
+    try:
+        seed_data()
+        return True
+    except Exception as e:
+        st.error(f"Failed to initialize database: {e}")
+        return False
+
+if not init_db():
+    st.info("Stopping application due to database initialization failure.")
+    st.stop()
+
 # Session State for Auth
 if 'user' not in st.session_state:
     st.session_state.user = None

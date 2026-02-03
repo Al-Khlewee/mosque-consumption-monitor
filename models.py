@@ -5,9 +5,18 @@ from sqlalchemy import create_engine, Column, Integer, String, Float, Date, Fore
 import enum
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 
+import os
+
 Base = declarative_base()
-DB_FILE = "mosques_v3.db"
-engine = create_engine(f"sqlite:///{DB_FILE}")
+DB_NAME = "mosques_v3.db"
+# Use absolute path to ensure DB is created in the expected location
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_FILE = os.path.join(BASE_DIR, DB_NAME)
+
+engine = create_engine(
+    f"sqlite:///{DB_FILE}",
+    connect_args={'check_same_thread': False} # Important for Streamlit
+)
 Session = sessionmaker(bind=engine)
 
 class Mosque(Base):
